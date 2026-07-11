@@ -24,7 +24,21 @@ body {
 .calculator-box .display {
   height: 100px;
   border: 2px solid black;
+  padding: 10px;
   border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+  font-size: 28px;
+}
+
+.calculator-box .display div:first-child {
+  align-self: flex-start;
+}
+
+.calculator-box .display div:last-child {
+  font-size: 36px;
 }
 
 .calculator-box .btns {
