@@ -21,36 +21,49 @@ let secondOperand = "";
 let operator = "";
 
 function operate(a, b, operator) {
-  let result;
   if (operator === "+") {
-    result = add(a, b);
+    return add(a, b);
   } else if (operator === "-") {
-    subtract(a, b);
-  } else if (operator === "*") {
-    result = multiply(a, b);
-  } else if (operator === "/") {
-    result = divide(a, b);
+    return subtract(a, b);
+  } else if (operator === "×") {
+    return multiply(a, b);
+  } else if (operator === "÷") {
+    return divide(a, b);
   }
-
-  return result;
 }
 
-let isSecondOperand = false;
-let isFirstOperand = false;
 let isOperating = false;
+let previousResult = "";
 
-function updateExpression(number, isOperator, isFunctionKey) {
-  if (firstOperand !== "" && operator === "" && isOperator) {
-    operator = number;
-    isOperating = true;
-  }
+function updateOperator(sign) {
+  operator = sign;
+  isOperating = true;
+}
 
-  if (isOperating && !isOperator && !isFunctionKey) {
-    secondOperand += number;
-    isSecondOperator = true;
-  } else if (!isOperator && !isFunctionKey) {
-    firstOperand += number;
+function updateOperands(number, isOperator, isFunctionKey) {
+  if (!isFunctionKey && !isOperator) {
+    if (isOperating) {
+      secondOperand += number;
+    } else {
+      firstOperand += number;
+    }
   }
+}
+
+function updateDisplay(firstOperand, operator, secondOperand, result) {
+  const calculation = document.querySelector(".calculation");
+  const answerElem = document.querySelector(".answer");
+
+  calculation.textContent = `${firstOperand} ${operator} ${secondOperand}`;
+  answerElem.textContent = result ? result : `${previousResult}`;
+}
+
+function clearCalculator() {
+  firstOperand = "";
+  secondOperand = "";
+  operator = "";
+  isOperating = false;
+  previousResult = "";
 }
 
 const digitBtn = document.querySelector(".btns");
@@ -61,18 +74,55 @@ digitBtn.addEventListener("click", (event) => {
   let isOperator = false;
   let isFunctionKey = false;
 
+  if (operand === "Clear" || operand === "Delete" || operand === "=") {
+    isFunctionKey = true;
+  }
+
   if (
     operand === "-" ||
     operand === "+" ||
     operand === "×" ||
     operand === "÷"
   ) {
-    isOperator = true;
-  } else if (operand === "Clear" || operand == "Delete") {
-    isFunctionKey = true;
+    if (operand == "-" && firstOperand == "") {
+      firstOperand += operand;
+      updateDisplay(firstOperand, operator, secondOperand);
+      return;
+    } else if (firstOperand !== "" && secondOperand !== "") {
+      firstOperand = +firstOperand;
+      secondOperand = +secondOperand;
+
+      let result = operate(firstOperand, secondOperand, operator);
+      previousResult = result;
+
+      firstOperand = String(result);
+      secondOperand = "";
+      updateOperator(operand);
+      updateDisplay(firstOperand, operator, secondOperand, result);
+      return;
+    } else {
+      updateOperator(operand);
+      isOperator = true;
+    }
   }
 
-  updateExpression(operand, isOperator, isFunctionKey);
+  if (operand == "=" && firstOperand !== "" && secondOperand !== "") {
+    firstOperand = +firstOperand;
+    secondOperand = +secondOperand;
+    let result = operate(firstOperand, secondOperand, operator);
+    updateDisplay(firstOperand, operator, secondOperand, result);
+    clearCalculator();
+    return;
+  }
+
+  if (operand == "Clear") {
+    clearCalculator();
+    updateDisplay(firstOperand, operator, secondOperand);
+    return;
+  }
+
+  updateOperands(operand, isOperator, isFunctionKey);
+  updateDisplay(firstOperand, operator, secondOperand);
 
   console.log(
     `firstOp: ${firstOperand} Op: ${operator} secondOp: ${secondOperand}`,
