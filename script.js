@@ -28,7 +28,12 @@ function operate(a, b, operator) {
   } else if (operator === "×") {
     return multiply(a, b);
   } else if (operator === "÷") {
-    return divide(a, b);
+    if (b === 0) {
+      clearCalculator();
+      return alert("Can't divide by 0");
+    } else {
+      return divide(a, b);
+    }
   }
 }
 
@@ -84,7 +89,11 @@ digitBtn.addEventListener("click", (event) => {
     operand === "×" ||
     operand === "÷"
   ) {
-    if (operand == "-" && firstOperand == "") {
+    if (operand == "-" && isOperating && secondOperand == "") {
+      secondOperand += operand;
+      updateDisplay(firstOperand, operator, secondOperand);
+      return;
+    } else if (operand == "-" && firstOperand == "") {
       firstOperand += operand;
       updateDisplay(firstOperand, operator, secondOperand);
       return;
@@ -93,8 +102,16 @@ digitBtn.addEventListener("click", (event) => {
       secondOperand = +secondOperand;
 
       let result = operate(firstOperand, secondOperand, operator);
-      previousResult = result;
+      const truncResult = Math.trunc(result);
+      if (result == undefined) {
+        return;
+      }
 
+      if (result !== truncResult) {
+        result = Number(result.toFixed(6));
+      }
+
+      previousResult = result;
       firstOperand = String(result);
       secondOperand = "";
       updateOperator(operand);
