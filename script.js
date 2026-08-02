@@ -41,15 +41,23 @@ let isOperating = false;
 let previousResult = "";
 
 function updateOperator(sign) {
-  operator = sign;
-  isOperating = true;
+  if (firstOperand !== "") {
+    operator = sign;
+    isOperating = true;
+  }
 }
 
-function updateOperands(number, isOperator, isFunctionKey) {
+function updateOperands(number, isOperator, isFunctionKey, decimalPoint) {
   if (!isFunctionKey && !isOperator) {
-    if (isOperating) {
+    if (firstOperand !== "" && isOperating) {
+      if (secondOperand.includes(".") && number === ".") {
+        return;
+      }
       secondOperand += number;
     } else {
+      if (firstOperand.includes(".") && number === ".") {
+        return;
+      }
       firstOperand += number;
     }
   }
@@ -69,6 +77,7 @@ function clearCalculator() {
   operator = "";
   isOperating = false;
   previousResult = "";
+  result = "";
 }
 
 const digitBtn = document.querySelector(".btns");
@@ -89,7 +98,11 @@ digitBtn.addEventListener("click", (event) => {
     operand === "×" ||
     operand === "÷"
   ) {
-    if (operand == "-" && isOperating && secondOperand == "") {
+    if (
+      (operand !== "×" || operand !== "÷") &&
+      isOperating &&
+      secondOperand == ""
+    ) {
       secondOperand += operand;
       updateDisplay(firstOperand, operator, secondOperand);
       return;
@@ -127,6 +140,15 @@ digitBtn.addEventListener("click", (event) => {
     firstOperand = +firstOperand;
     secondOperand = +secondOperand;
     let result = operate(firstOperand, secondOperand, operator);
+    const truncResult = Math.trunc(result);
+    if (result == undefined) {
+      return;
+    }
+
+    if (result !== truncResult) {
+      result = Number(result.toFixed(6));
+    }
+
     updateDisplay(firstOperand, operator, secondOperand, result);
     clearCalculator();
     return;
