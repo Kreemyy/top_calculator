@@ -178,8 +178,4 @@ digitBtn.addEventListener("click", (event) => {
 
   updateOperands(operand, isOperator, isFunctionKey);
   updateDisplay(firstOperand, operator, secondOperand);
-
-  console.log(
-    `firstOp: ${firstOperand} Op: ${operator} secondOp: ${secondOperand}`,
-  );
 });
