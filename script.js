@@ -80,6 +80,18 @@ function clearCalculator() {
   result = "";
 }
 
+function backspace() {
+  if (secondOperand !== "") {
+    secondOperand = secondOperand.slice(0, -1);
+  } else if (operator !== "") {
+    operator = "";
+  } else if (firstOperand !== "") {
+    firstOperand = firstOperand.slice(0, -1);
+  }
+
+  updateDisplay();
+}
+
 const digitBtn = document.querySelector(".btns");
 digitBtn.addEventListener("click", (event) => {
   const calculation = document.querySelector(".calculation");
@@ -152,6 +164,10 @@ digitBtn.addEventListener("click", (event) => {
     updateDisplay(firstOperand, operator, secondOperand, result);
     clearCalculator();
     return;
+  }
+
+  if (operand == "Delete") {
+    backspace();
   }
 
   if (operand == "Clear") {
