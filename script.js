@@ -110,11 +110,7 @@ digitBtn.addEventListener("click", (event) => {
     operand === "×" ||
     operand === "÷"
   ) {
-    if (
-      (operand !== "×" || operand !== "÷") &&
-      isOperating &&
-      secondOperand == ""
-    ) {
+    if (operand == "-" && isOperating && secondOperand == "") {
       secondOperand += operand;
       updateDisplay(firstOperand, operator, secondOperand);
       return;
